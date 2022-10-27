@@ -126,6 +126,14 @@ def process_time(time):
             ret[j].append(ts)
     return ret
 
+def process_ins(ins):
+    ret = []
+    for i in ins:
+        for j in i.split('\n'):
+            ret.append(j)
+    return ret
+
+
 def getRoomUsage():
     rooms = {}
     # res = crawl(index = 2210, generate_md5 = False)
@@ -135,6 +143,9 @@ def getRoomUsage():
         for slot in res[0][course]['course_slots']:
             venue = slot['venue'][0]
             time = slot['time']
+            course_section = slot['section']
+            course_ins = slot['instructor']
+            course_ins = process_ins(course_ins)
             venue = process_venue(venue)
             time = process_time(time)
             if not (rooms.__contains__(venue)):
@@ -143,7 +154,7 @@ def getRoomUsage():
                 if not (rooms[venue].__contains__(wd)):
                     rooms[venue][wd]=[]
                 for t in ts:
-                    rooms[venue][wd].append((t,course_code))
+                    rooms[venue][wd].append((t,course_code,course_section,course_ins))
     return rooms
 
 def getCourseList():
@@ -236,8 +247,8 @@ def local_rooms():
     return dic
 
 
-# rooms = getRoomUsage()
-rooms = local_rooms()
+rooms = getRoomUsage()
+# rooms = local_rooms()
 rooms = beautify(rooms)
 json.dumps(rooms)
 
