@@ -146,12 +146,33 @@ def getRoomUsage():
                     rooms[venue][wd].append((t,course_code))
     return rooms
 
+def getCourseList():
+    ret = {}
+    # res = crawl(index = 2210, generate_md5 = False)
+    res = localcrawl()
+    for course in res[0]:
+        course_code = res[0][course]['course_code']
+        course_name = res[0][course]['course_name']
+        ret[course_code]=course_name
+    return ret
+
+def cmp_time(a,b):
+    if time_convert(a[0][:7]) < time_convert(b[0][:7]):
+        return -1
+    if time_convert(a[0][:7]) == time_convert(b[0][:7]):
+        return 0
+    return 1
+
 def beautify(rooms):
-    for room in rooms.keys():
-        rooms[room]["name"] = room
     tmp = {}
     for i in sorted(rooms.keys()):
         tmp[i]=rooms[i]
+    for j in tmp.keys():
+        for i in tmp[j].keys():
+            if(i!='name'):
+                tmp[j][i].sort(key=functools.cmp_to_key(cmp_time))
+    for i in tmp.keys():
+        tmp[i]["name"] = i
     return tmp
 
 def time_convert(a):
@@ -196,13 +217,6 @@ def get_empty(rooms, start, duration, wd):
             ret.append(room)
     return ret
 
-def cmp_time(a,b):
-    if time_convert(a[0][:7]) < time_convert(b[0][:7]):
-        return -1
-    if time_convert(a[0][:7]) == time_convert(b[0][:7]):
-        return 0
-    return 1
-
 def print_timetable(rooms, room):
     if not (room in rooms.keys()):
         return {}
@@ -223,7 +237,10 @@ def local_rooms():
 
 
 # rooms = getRoomUsage()
-# rooms = beautify(rooms)
 rooms = local_rooms()
-# json.dumps(rooms)
+rooms = beautify(rooms)
+json.dumps(rooms)
+
+# courses = getCourseList()
+
 
