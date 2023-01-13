@@ -136,8 +136,8 @@ def process_ins(ins):
 
 def getRoomUsage():
     rooms = {}
-    # res = crawl(index = 2210, generate_md5 = False)
-    res = localcrawl()
+    res = crawl(index = 2230, generate_md5 = False)
+    # res = localcrawl()
     for course in res[0]:
         course_code = res[0][course]['course_code']
         for slot in res[0][course]['course_slots']:
@@ -246,12 +246,19 @@ def local_rooms():
     file.close()
     return dic
 
+def getRooms(rooms):
+    ret = []
+    for key in rooms.keys():
+        if not (key in ret):
+            ret.append(key)
+    return ret
 
-rooms = getRoomUsage()
-# rooms = local_rooms()
-rooms = beautify(rooms)
+# rooms = getRoomUsage()
+rooms = local_rooms()
+# rooms = beautify(rooms)
 json.dumps(rooms)
+json.dumps(getRooms(rooms))
 
-# courses = getCourseList()
+courses = getCourseList()
 
 
